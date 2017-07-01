@@ -1,14 +1,18 @@
-package com.prosport.place.util.field;
+package com.prosport.place.util.constants;
 
 /**
  * @author Vlad Milyutin.
  */
-public enum InfrastuctureFields {
+public enum InfrastructuresConsts {
+    PARKING,
+    SHOWER,
+    DRESSING_ROOM;
 
-    INFRASTRUCTURE_NAME;
 
     @Override
     public String toString() {
         return super.toString().toLowerCase();
     }
 }
+
+

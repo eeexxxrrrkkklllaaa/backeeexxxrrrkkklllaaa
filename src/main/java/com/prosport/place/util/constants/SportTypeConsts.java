@@ -5,11 +5,13 @@ package com.prosport.place.util.constants;
  */
 public enum SportTypeConsts {
     FOOTBALL,
-    BASKETBALL;
+    BASKETBALL,
+    VOLEYBALL,
+    HOKEY;
 
 
     @Override
     public String toString() {
-        return super.toString();
+        return super.toString().toLowerCase();
     }
 }

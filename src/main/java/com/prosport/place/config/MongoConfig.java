@@ -38,7 +38,7 @@ public class MongoConfig extends AbstractMongoConfiguration {
 
     @Override
     public Mongo mongo() throws Exception {
-	return new MongoClient( singletonList(new ServerAddress(host, port)),
+	    return new MongoClient( singletonList(new ServerAddress(host, port)),
                 singletonList(MongoCredential.createCredential(username, db, password.toCharArray())));
     }
 }
