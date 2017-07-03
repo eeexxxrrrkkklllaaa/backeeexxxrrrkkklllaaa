@@ -7,6 +7,8 @@ public enum PlaceFields {
 
     PLACE_ID,
     PLACE_NAME,
+    LAT,
+    LON,
     PLACE_ADDRESS,
     PLACE_STATUS,
     PLACE_INFRASTRUCTURES,

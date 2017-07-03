@@ -16,31 +16,32 @@ import static java.util.Collections.singletonList;
 /**
  * @author Vlad Milyutin
  */
-@Profile(value = "default")
+//TODO: after reload remove toLowerCase()
+@Profile(value = "test")
 @Configuration
 @EnableMongoRepositories(basePackages = "com.prosport.place.repository")
 @PropertySource("classpath:/place.properties")
-public class MongoConfig extends AbstractMongoConfiguration {
+public class TestMongoConfig extends AbstractMongoConfiguration {
 
     @Value("${db.host}")
     private String host;
     @Value("${db.port}")
     private int port;
-    @Value("${db.name}")
+    @Value("${test.db.name}")
     private String db;
-    @Value("${db.username}")
+    @Value("${test.db.username}")
     private String username;
-    @Value("${db.password}")
+    @Value("${test.db.password}")
     private String password;
 
     @Override
     protected String getDatabaseName() {
-        return db;
+        return db.toLowerCase();
     }
 
     @Override
     public Mongo mongo() throws Exception {
-	    return new MongoClient( singletonList(new ServerAddress(host, port)),
-                singletonList(MongoCredential.createCredential(username, db, password.toCharArray())));
+        return new MongoClient( singletonList(new ServerAddress(host, port)),
+                singletonList(MongoCredential.createCredential(username, db.toLowerCase(), password.toCharArray())));
     }
 }

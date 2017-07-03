@@ -27,15 +27,23 @@ public class Place {
     @Field("place_address")
     private String address;
 
+    @JsonProperty("lat")
+    @Field("lat")
+    private double lat;
+
+    @JsonProperty("lon")
+    @Field("lon")
+    private double lon;
+
     @JsonProperty("place_status")
     @Field("place_status")
     private String status;
 
     @JsonProperty("place_sport_types")
     @Field("place_sport_types")
-    private Set<SportType> sportTypes;
+    private Set<String> sportTypes;
 
     @JsonProperty("place_infrastructures")
     @Field("place_infrastructures")
-    private Set<Infrastructure> infrastructures;
+    private Set<String> infrastructures;
 }

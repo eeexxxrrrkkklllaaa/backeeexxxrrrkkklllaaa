@@ -27,10 +27,6 @@ public class JsonNodeToPlaceConverter implements Converter<JsonNode, Place> {
     public Place convert(JsonNode placeData) {
         LOG.info("'convert' invoked with param: '{}'", placeData);
 
-        if(placeData == null){
-            throw new IllegalArgumentException("Place data can't be null");
-        }
-
         Place place = null;
 
         try {
