@@ -6,8 +6,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.Set;
-
 /**
  * @author Vlad Milyutin.
  */
@@ -41,9 +39,10 @@ public class Place {
 
     @JsonProperty("place_sport_types")
     @Field("place_sport_types")
-    private Set<String> sportTypes;
+    private Sport sportTypes;
 
     @JsonProperty("place_infrastructures")
     @Field("place_infrastructures")
-    private Set<String> infrastructures;
+    private Infrastructure infrastructure;
+
 }

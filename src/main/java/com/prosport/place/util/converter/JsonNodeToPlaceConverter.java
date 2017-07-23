@@ -36,7 +36,6 @@ public class JsonNodeToPlaceConverter implements Converter<JsonNode, Place> {
             LOG.error(e.getMessage() + e.getStackTrace());
         }
 
-
         LOG.info("'convert({})' returned: '{}'", placeData, place);
         return place;
     }

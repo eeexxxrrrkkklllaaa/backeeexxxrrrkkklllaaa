@@ -5,14 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.prosport.place.entity.Place;
 import com.prosport.place.repository.PlaceRepository;
+import com.prosport.place.sorter.PlaceSorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Vlad Milyutin.
@@ -24,14 +24,28 @@ public class PlaceServiceImpl implements PlaceService {
 
     private final PlaceRepository placeRepository;
     private final ConversionService conversionService;
+    private final PlaceSorter placeSorter;
 
     @Autowired
     public PlaceServiceImpl(PlaceRepository placeRepository,
-                            ConversionService conversionService) {
+                            ConversionService conversionService,
+                            PlaceSorter placeSorter) {
         this.placeRepository = placeRepository;
         this.conversionService = conversionService;
+        this.placeSorter = placeSorter;
     }
 
+    @Override
+    public Collection<JsonNode> findAll() {
+        LOG.info("'findAll' invoked");
+
+        List<Place> places = placeRepository.findAll();
+        Set<JsonNode> placeSet = new HashSet<>();
+        places.forEach(place -> placeSet.add(conversionService.convert(place, JsonNode.class)));
+
+        LOG.info("'findAll' returned: '{}'", placeSet);
+        return placeSet;
+    }
 
     @Override
     public JsonNode findByName(String name) {
@@ -126,5 +140,43 @@ public class PlaceServiceImpl implements PlaceService {
 
         LOG.info("'findInSpecificSquare({}, {}, {})' returned: ", lat, lon, radius, placeDataSet);
         return placeDataSet;
+    }
+
+    /**
+     * Sorting Collection Places by SportTypes and Infrastructures
+     * @param placeData - Collection of Places
+     * @param sportParam - String of sport params separated by coma
+     * @param infParam  - String of infrastructure params separated by coma
+     * @return sorted Collection<JsonNode>
+     */
+    @Override
+    public Collection<JsonNode> sort(Collection<JsonNode> placeData, String sportParam, String infParam) throws Exception {
+        LOG.info("'sort' invoked with params: '{}', '{}', '{}'");
+
+        // Converting all JsonNode to Place
+        Collection<JsonNode> sortedPlacesNodes = new ArrayList<>();
+        List<Place> placeList = new ArrayList<>();
+        List<Place> sortedList = new ArrayList<>();
+        placeData.forEach(place -> placeList.add(conversionService.convert(place, Place.class)));
+
+        //Checking that sportParam is not empty, and if not do sorting by sportParams
+        if(!sportParam.contains("none")){
+            LOG.info("Sport Params not empty");
+            sortedList = (List) placeSorter.sortBySportType(placeList, sportParam);
+        }
+        else {
+            sortedList = placeList;
+        }
+        //Checking that infParam is not empty
+        if(!infParam.contains("none")){
+            LOG.info("Inf Params not empty");
+            sortedList = (List) placeSorter.sortByInfrastructure(sortedList, infParam);
+        }
+
+        // Converting back to JsonNode
+        sortedList.forEach(place -> sortedPlacesNodes.add(conversionService.convert(place, JsonNode.class)));
+
+        LOG.info("'sort({},{},{})' returned: '{}'", placeData, sportParam, infParam, sortedPlacesNodes);
+        return sortedPlacesNodes;
     }
 }
