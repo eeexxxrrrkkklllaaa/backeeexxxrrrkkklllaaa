@@ -1,4 +1,4 @@
-package com.prosport.place.entity;
+package com.prosport.place.entity.place;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

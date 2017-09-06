@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.prosport.place.entity.Place;
+import com.prosport.place.entity.place.Place;
 import com.prosport.place.repository.PlaceRepository;
 import com.prosport.place.service.PlaceService;
 import com.prosport.place.util.JsonUtil;

@@ -1,15 +1,16 @@
-package com.prosport.place.service;
+package com.prosport.place.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.prosport.place.entity.Place;
+import com.prosport.place.entity.place.Place;
 import com.prosport.place.repository.PlaceRepository;
+import com.prosport.place.service.PlaceService;
 import com.prosport.place.sorter.PlaceSorter;
+import com.prosport.place.util.converter.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -23,15 +24,12 @@ public class PlaceServiceImpl implements PlaceService {
     private static final Logger LOG = LoggerFactory.getLogger(PlaceServiceImpl.class);
 
     private final PlaceRepository placeRepository;
-    private final ConversionService conversionService;
     private final PlaceSorter placeSorter;
 
     @Autowired
     public PlaceServiceImpl(PlaceRepository placeRepository,
-                            ConversionService conversionService,
                             PlaceSorter placeSorter) {
         this.placeRepository = placeRepository;
-        this.conversionService = conversionService;
         this.placeSorter = placeSorter;
     }
 
@@ -41,7 +39,7 @@ public class PlaceServiceImpl implements PlaceService {
 
         List<Place> places = placeRepository.findAll();
         Set<JsonNode> placeSet = new HashSet<>();
-        places.forEach(place -> placeSet.add(conversionService.convert(place, JsonNode.class)));
+        places.forEach(place -> placeSet.add(Converter.convertToNode(place)));
 
         LOG.info("'findAll' returned: '{}'", placeSet);
         return placeSet;
@@ -52,7 +50,7 @@ public class PlaceServiceImpl implements PlaceService {
         LOG.info("'findByName' invoked with param: '{}'", name);
 
         Place place = placeRepository.findByName(name);
-        JsonNode placeData = conversionService.convert(place, JsonNode.class);
+        JsonNode placeData = Converter.convertToNode(place);
 
         LOG.info("'findByName({})' returned: '{}'", place, placeData);
         return placeData;
@@ -63,7 +61,7 @@ public class PlaceServiceImpl implements PlaceService {
         LOG.info("'findByAddress' invoked with param: '{}'", address);
 
         Place place = placeRepository.findByAddress(address);
-        JsonNode placeData = conversionService.convert(place, JsonNode.class);
+        JsonNode placeData = Converter.convertToNode(place);
 
         LOG.info("'findByAddress({})' returned: '{}'", place, placeData);
         return placeData;
@@ -73,9 +71,9 @@ public class PlaceServiceImpl implements PlaceService {
     public JsonNode save(JsonNode placeData) {
         LOG.info("'save' invoked with param: '{}'", placeData);
 
-        Place place = conversionService.convert(placeData, Place.class);
+        Place place = Converter.convertToObject(placeData, Place.class);
         place = placeRepository.save(place);
-        JsonNode savedData = conversionService.convert(place, JsonNode.class);
+        JsonNode savedData = Converter.convertToNode(place);
 
         LOG.info("'save({})' returned: '{}'", place, savedData);
         return savedData;
@@ -85,7 +83,7 @@ public class PlaceServiceImpl implements PlaceService {
     public JsonNode update(JsonNode placeData) {
         LOG.info("'update' invoked with param: '{}'", placeData);
 
-        Place place = conversionService.convert(placeData, Place.class);
+        Place place = Converter.convertToObject(placeData, Place.class);
         placeRepository.save(place);
 
         LOG.info("'update({})' returned: '{}'", placeData, placeData);
@@ -96,7 +94,7 @@ public class PlaceServiceImpl implements PlaceService {
     public JsonNode delete(JsonNode placeData) {
         LOG.info("'delete' invoked with param: '{}'", placeData);
 
-        Place place = conversionService.convert(placeData, Place.class);
+        Place place = Converter.convertToObject(placeData, Place.class);
         placeRepository.delete(place);
         ObjectNode responseData = new ObjectMapper().createObjectNode();
         responseData.put("status","deleted");
@@ -111,7 +109,7 @@ public class PlaceServiceImpl implements PlaceService {
 
         Set<Place> placeSet = placeRepository.findByInfrastructureName(infrastructureName);
         Set<JsonNode> placeDataSet = new HashSet<>();
-        placeSet.forEach(place -> placeDataSet.add(conversionService.convert(place, JsonNode.class)));
+        placeSet.forEach(place -> placeDataSet.add(Converter.convertToNode(place)));
 
         LOG.info("'findByInfrastructureName({})' returned: '{}'", infrastructureName, placeDataSet);
         return placeDataSet;
@@ -123,7 +121,7 @@ public class PlaceServiceImpl implements PlaceService {
 
         Set<Place> placeSet = placeRepository.findBySportTypeName(sportTypeName);
         Set<JsonNode> placeDataSet = new HashSet<>();
-        placeSet.forEach(place -> placeDataSet.add(conversionService.convert(place, JsonNode.class)));
+        placeSet.forEach(place -> placeDataSet.add(Converter.convertToNode(place)));
 
         LOG.info("'findBySportTypeName({})' returned: '{}'", sportTypeName, placeDataSet);
         return placeDataSet;
@@ -136,7 +134,7 @@ public class PlaceServiceImpl implements PlaceService {
         Set<Place> placeSet =
                 placeRepository.findInSpecificSquare(lat - radius, lat + radius, lon - radius, lon + radius);
         Set<JsonNode> placeDataSet = new HashSet<>();
-        placeSet.forEach(place -> placeDataSet.add(conversionService.convert(place, JsonNode.class)));
+        placeSet.forEach(place -> placeDataSet.add(Converter.convertToNode(place)));
 
         LOG.info("'findInSpecificSquare({}, {}, {})' returned: ", lat, lon, radius, placeDataSet);
         return placeDataSet;
@@ -157,7 +155,7 @@ public class PlaceServiceImpl implements PlaceService {
         Collection<JsonNode> sortedPlacesNodes = new ArrayList<>();
         List<Place> placeList = new ArrayList<>();
         List<Place> sortedList = new ArrayList<>();
-        placeData.forEach(place -> placeList.add(conversionService.convert(place, Place.class)));
+        placeData.forEach(place -> placeList.add(Converter.convertToObject(place, Place.class)));
 
         //Checking that sportParam is not empty, and if not do sorting by sportParams
         if(!sportParam.contains("none")){
@@ -174,7 +172,7 @@ public class PlaceServiceImpl implements PlaceService {
         }
 
         // Converting back to JsonNode
-        sortedList.forEach(place -> sortedPlacesNodes.add(conversionService.convert(place, JsonNode.class)));
+        sortedList.forEach(place -> sortedPlacesNodes.add(Converter.convertToNode(place)));
 
         LOG.info("'sort({},{},{})' returned: '{}'", placeData, sportParam, infParam, sortedPlacesNodes);
         return sortedPlacesNodes;

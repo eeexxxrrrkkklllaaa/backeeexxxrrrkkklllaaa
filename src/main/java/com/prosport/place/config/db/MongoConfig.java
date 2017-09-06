@@ -1,4 +1,4 @@
-package com.prosport.place.config;
+package com.prosport.place.config.db;
 
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
@@ -16,32 +16,31 @@ import static java.util.Collections.singletonList;
 /**
  * @author Vlad Milyutin
  */
-//TODO: after reload remove toLowerCase()
-@Profile(value = "test")
+@Profile(value = "default")
 @Configuration
 @EnableMongoRepositories(basePackages = "com.prosport.place.repository")
 @PropertySource("classpath:/place.properties")
-public class TestMongoConfig extends AbstractMongoConfiguration {
+public class MongoConfig extends AbstractMongoConfiguration {
 
     @Value("${db.host}")
     private String host;
     @Value("${db.port}")
     private int port;
-    @Value("${test.db.name}")
+    @Value("${db.name}")
     private String db;
-    @Value("${test.db.username}")
+    @Value("${db.username}")
     private String username;
-    @Value("${test.db.password}")
+    @Value("${db.password}")
     private String password;
 
     @Override
     protected String getDatabaseName() {
-        return db.toLowerCase();
+        return db;
     }
 
     @Override
     public Mongo mongo() throws Exception {
-        return new MongoClient( singletonList(new ServerAddress(host, port)),
-                singletonList(MongoCredential.createCredential(username, db.toLowerCase(), password.toCharArray())));
+	    return new MongoClient( singletonList(new ServerAddress(host, port)),
+                singletonList(MongoCredential.createCredential(username, db, password.toCharArray())));
     }
 }

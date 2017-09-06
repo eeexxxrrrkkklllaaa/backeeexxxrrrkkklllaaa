@@ -1,6 +1,6 @@
 package com.prosport.place.repository;
 
-import com.prosport.place.entity.Place;
+import com.prosport.place.entity.place.Place;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
@@ -10,6 +10,7 @@ import java.util.Set;
  * @author Vlad Milyutin.
  */
 public interface PlaceRepository extends MongoRepository<Place, String>{
+
     Place findByName(String name);
     Place findByAddress(String address);
     Set<Place> findByStatus(String status);

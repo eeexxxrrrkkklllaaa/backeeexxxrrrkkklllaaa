@@ -1,8 +1,8 @@
 package com.prosport.place.sorter;
 
-import com.prosport.place.entity.Infrastructure;
-import com.prosport.place.entity.Place;
-import com.prosport.place.entity.Sport;
+import com.prosport.place.entity.place.Infrastructure;
+import com.prosport.place.entity.place.Place;
+import com.prosport.place.entity.place.Sport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
